@@ -2,11 +2,7 @@ import enum
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey, Text
 from sqlalchemy.orm import relationship
-
 from .database import Base
-
-
-
 
 class ScanStatusEnum(str, enum.Enum):
     pending  = "pending"   
@@ -35,16 +31,16 @@ class Scan(Base):
 class Package(Base):
     __tablename__ = "packages"
 
-    id           = Column(Integer, primary_key=True, index=True)
-    scan_id      = Column(Integer, ForeignKey("scans.id"), nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    scan_id = Column(Integer, ForeignKey("scans.id"), nullable=False)
 
-    name         = Column(String, nullable=False)  
-    version      = Column(String)                  
-    license      = Column(String)                  
-    ecosystem    = Column(String)                 
+    name = Column(String, nullable=False)  
+    version = Column(String)                  
+    license = Column(String)                  
+    ecosystem = Column(String)                 
 
-    status       = Column(Enum(PackageStatusEnum), default=PackageStatusEnum.needs_review)
-    cve_ids      = Column(Text)                    
+    status = Column(Enum(PackageStatusEnum), default=PackageStatusEnum.needs_review)
+    cve_ids = Column(Text)                    
     last_checked = Column(DateTime, default=datetime.utcnow)
 
 
