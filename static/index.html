@@ -1,14 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LicenseWatch</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-</body>
+  <header>
+    <hgroup class="logo">
+      <h1>
+        <b class="logo-bracket">[</b>
+        <span class="logo-text">LICENSE<mark class="logo-accent">WATCH</mark></span>
+        <b class="logo-bracket">]</b>
+      </h1>
+      <p class="tagline">Open source license CVE compliance checker for container images</p>
+    </hgroup>
+    <aside class="header-meta">
+      <small class="badge">v1.0.0</small>
+      <a href="/docs" target="_blank" rel="noopener noreferrer" class="docs-link">API Docs ↗</a>
+    </aside>
+  </header>
 
+  <main>
+    <section class="scan-form-section" aria-label="Scan Configuration">
+      <label for="imageInput" class="form-label">
+        <kbd class="prompt">$</kbd> Enter a Docker image to scan
+      </label>
+      <form class="scan-form" action="/scan" method="POST">
+        <input
+          id="imageInput"
+          name="image"
+          type="text"
+          class="image-input"
+          placeholder="e.g. python:3.12-slim  or  registry.access.redhat.com/ubi9/python-39"
+          autocomplete="off"
+          spellcheck="false"
+          required
+        />
+        <button type="submit" id="scanBtn" class="scan-btn">
+          <span class="btn-text">SCAN</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+      <menu class="quick-picks">
+        <li><span class="quick-label">Try:</span></li>
+        <li><button type="button" class="quick-btn">python:3.12-slim</button></li>
+        <li><button type="button" class="quick-btn">node:20-alpine</button></li>
+        <li><button type="button" class="quick-btn">ubi9/python-39</button></li>
+      </menu>
+    </section>
+
+    <output id="statusBar" class="status-bar" aria-live="polite">
+      <span class="status-indicator">
+        <i id="statusDot" class="status-dot complete" aria-hidden="true"></i>
+        <span id="statusText" class="status-text">Scan complete — 142 packages scanned</span>
+      </span>
+      <span class="status-image" id="statusImage">python:3.12-slim</span>
+    </output>
+
+    <section id="results" class="results" aria-label="Scan Results">
+      
+      <section class="summary-grid" aria-label="Summary Metrics">
+        <article class="card card-total">
+          <data class="card-value" id="countTotal" value="142">142</data>
+          <h2 class="card-label">Total Packages</h2>
+        </article>
+        <article class="card card-clean">
+          <data class="card-value" id="countClean" value="130">130</data>
+          <h2 class="card-label">Clean</h2>
+        </article>
+        <article class="card card-review">
+          <data class="card-value" id="countReview" value="10">10</data>
+          <h2 class="card-label">Needs Review</h2>
+        </article>
+        <article class="card card-flagged">
+          <data class="card-value" id="countFlagged" value="2">2</data>
+          <h2 class="card-label">Flagged</h2>
+        </article>
+      </section>
+
+      <nav class="filter-row" aria-label="Table Filters">
+        <menu class="filter-tabs">
+          <li><button type="button" class="tab active">All</button></li>
+          <li><button type="button" class="tab">Flagged</button></li>
+          <li><button type="button" class="tab">Needs Review</button></li>
+          <li><button type="button" class="tab">Clean</button></li>
+        </menu>
+        <search>
+          <form action="/search" method="GET">
+            <input
+              type="search"
+              name="q"
+              id="searchInput"
+              class="search-input"
+              placeholder="Search packages…"
+            />
+          </form>
+        </search>
+      </nav>
+
+      <figure class="table-wrap">
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th scope="col">Package</th>
+              <th scope="col">Version</th>
+              <th scope="col">Ecosystem</th>
+              <th scope="col">License</th>
+              <th scope="col">Status</th>
+              <th scope="col">CVEs</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr class="row-clean">
+              <th scope="row" class="pkg-name">pip</th>
+              <td class="pkg-version">24.0</td>
+              <td>PyPI</td>
+              <td class="pkg-license">MIT</td>
+              <td><mark class="badge-status clean">✅ Clean</mark></td>
+              <td class="pkg-cves"><span class="no-cves">—</span></td>
+            </tr>
+            <tr class="row-needs_review">
+              <th scope="row" class="pkg-name">urllib3</th>
+              <td class="pkg-version">1.26.15</td>
+              <td>PyPI</td>
+              <td class="pkg-license">MIT</td>
+              <td><mark class="badge-status needs_review">⚠ Review</mark></td>
+              <td class="pkg-cves">
+                <a class="cve-link" href="https://osv.dev/vulnerability/CVE-2023-43804" target="_blank" rel="noopener noreferrer">CVE-2023-43804</a>
+              </td>
+            </tr>
+            <tr class="row-flagged">
+              <th scope="row" class="pkg-name">openssl</th>
+              <td class="pkg-version">3.0.9-r1</td>
+              <td>Alpine</td>
+              <td class="pkg-license">Apache-2.0</td>
+              <td><mark class="badge-status flagged">🚨 Flagged</mark></td>
+              <td class="pkg-cves">
+                <a class="cve-link" href="https://osv.dev/vulnerability/CVE-2023-3817" target="_blank" rel="noopener noreferrer">CVE-2023-3817</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <figcaption id="emptyState" class="empty-state hidden">No packages match the current filter.</figcaption>
+      </figure>
+
+      <aside class="history-section" aria-labelledby="history-heading">
+        <h2 id="history-heading" class="section-heading">Recent Scans</h2>
+        <nav id="historyList" class="history-list" aria-label="Recent Scans List">
+          <button type="button" class="history-item">
+            <span class="history-image">python:3.12-slim</span>
+            <mark class="history-status complete">complete</mark>
+            <time class="history-date" datetime="2024-05-18T12:00:00Z">2m ago</time>
+          </button>
+          <button type="button" class="history-item">
+            <span class="history-image">node:20-alpine</span>
+            <mark class="history-status complete">complete</mark>
+            <time class="history-date" datetime="2024-05-17T09:30:00Z">1d ago</time>
+          </button>
+        </nav>
+      </aside>
+
+    </section>
+  </main>
+
+  <footer>
+    <small>Built with FastAPI Syft OSV.dev</small>
+  </footer>
+
+</body>
 </html>
