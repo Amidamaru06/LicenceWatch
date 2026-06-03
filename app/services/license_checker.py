@@ -42,4 +42,4 @@ def check_license(license_str: str | None) -> str:
     if normalized in REVIEW_LICENSES:
         return "needs_review"
 
-    return "needs_review"   # Unrecognised → human review
+    return "needs_review" 
