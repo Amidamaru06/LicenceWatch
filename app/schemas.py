@@ -4,30 +4,32 @@ from typing import Optional, List
 from .models import ScanStatusEnum, PackageStatusEnum
 
 
+
 class PackageOut(BaseModel):
-    id: int
-    name: str
+
+    id:int
+    name:str
     version:Optional[str] = None
     license:Optional[str] = None
     ecosystem:Optional[str] = None
     status:PackageStatusEnum
-    cve_ids:Optional[str] = None
-    last_checked:datetime
+    cve_ids:Optional[str] = None   
+    last_checked: datetime
 
     class Config:
-        from_attributes = True
+        from_attributes = True 
 
 
 class ScanCreate(BaseModel):
-    image_name: str
 
+    image_name: str 
 
 class ScanOut(BaseModel):
-    id: int
-    image_name: str
-    scan_status: ScanStatusEnum
-    created_at: datetime
-    packages: List[PackageOut] = []
+    id:int
+    image_name:str
+    scan_status:ScanStatusEnum
+    created_at:datetime
+    packages:List[PackageOut] = []
 
     @property
     def clean_count(self) -> int:

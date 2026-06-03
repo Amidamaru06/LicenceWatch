@@ -9,17 +9,20 @@ DB_URL = os.getenv("DB_URL", "sqlite:///./licensewatch.db")
 
 engine = create_engine(
     DB_URL,
-    connect_args={"check_same_thread": False} if DB_URL.startswith("sqlite") else {},
+    connect_args={"check_same_thread": False},
 )
 
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 Base = declarative_base()
 
 
 def get_db():
+
     db = SessionLocal()
     try:
-        yield db
+        yield db       
     finally:
-        db.close()
+        db.close()     
